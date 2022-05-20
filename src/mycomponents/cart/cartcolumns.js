@@ -31,6 +31,7 @@ const Cartcolumns = () => {
               <p className="text-uppercase">total</p>
             </div>
           </div>
+          <Hr></Hr>
         </div>
       </TextWrapper>
     </>
@@ -38,6 +39,14 @@ const Cartcolumns = () => {
 };
 
 const TextWrapper = styled.div`
+p{
+  font-weight : bold;
+  font-size : 1.2rem !important;
+  font-style : 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
 `;
+
+const Hr = styled.hr`
+border : 1px solid red;`
 
 export default Cartcolumns;

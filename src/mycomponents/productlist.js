@@ -3,10 +3,9 @@ import Product from './product.js';
 import Title  from "./title.js";
 import {storeProducts } from '../data.js';
 import {ProductConsumer} from './context';
+import app from '../firebase.js';
 class Productlist extends Component {
-    state={
-        products:storeProducts
-    }
+    
     render() {
         return (
             <>

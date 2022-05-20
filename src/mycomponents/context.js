@@ -1,7 +1,10 @@
 // context API is used for the purpose of storing and serving the data
-
+import app from "../firebase.js";
 import React, { Component } from "react";
 import { storeProducts, detailProduct } from "../data";
+import { getFirestore, collection, getDocs } from "firebase/firestore/lite";
+
+const db = getFirestore(app);
 
 const ProductContext = React.createContext();
 //It comes with two components
@@ -10,7 +13,7 @@ const ProductContext = React.createContext();
 
 class ProductProvider extends Component {
   state = {
-    products: storeProducts,
+    products: [],
     detailProduct: detailProduct,
     cart: [],
     modalOpen: false,
@@ -50,12 +53,23 @@ class ProductProvider extends Component {
     );
   };
   // since the objcets in javascripts are passed by refernece so change in product will reflect in data.js
+
   componentDidMount() {
-    this.setProducts();
+    this.getMedicines().then((products) => {
+      this.setProducts(products);
+    });
   }
-  setProducts = () => {
+
+  getMedicines = async () => {
+    const medicinesCol = collection(db, "medicines");
+    const productsSnapshot = await getDocs(medicinesCol);
+    const products = productsSnapshot.docs.map((doc) => doc.data());
+    return products||[];
+  };
+
+  setProducts = (products) => {
     let temp = [];
-    storeProducts.forEach((item) => {
+    products.forEach((item) => {
       const singleitem = { ...item };
       temp = [...temp, singleitem];
     });
@@ -91,7 +105,7 @@ class ProductProvider extends Component {
       () => {
         this.addTotal();
       }
-    ); 
+    );
   };
 
   decreament = (id) => {
@@ -142,8 +156,11 @@ class ProductProvider extends Component {
         return { cart: [] };
       },
       () => {
-        this.setProducts();
-        this.addTotal();
+        this.getMedicines()
+        .then(products => {
+          this.setProducts(products);
+          this.addTotal();
+        })
       }
     );
   };
