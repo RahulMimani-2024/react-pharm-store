@@ -25,7 +25,7 @@
   },
   "scripts": {
     "dev": "env-cmd -f ./config/.env nodemon /src/app.js",
-    "start": "env-cmd -f ./config/.env react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
