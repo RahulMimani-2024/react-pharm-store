@@ -5,8 +5,7 @@ import { ProductConsumer } from "./context.js";
 import PropTypes from "prop-types";
 class Product extends Component {
   render() {
-    // const {user} = useUserAuth();
-    const { _id,id, title, img, price, inCart } = this.props.product;
+    const { _id,id, title,  price, inCart } = this.props.product;
     return (
       <Productwrapper className="col-9 mx-auto col-md-6 col-lg-3 my-3">
         <div className="card">

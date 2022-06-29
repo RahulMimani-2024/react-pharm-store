@@ -64,7 +64,6 @@ class ProductProvider extends Component {
   // since the objcets in javascripts are passed by refernece so change in product will reflect in data.js
 
   UNSAFE_componentWillMount() {
-    console.log(process.env.REACT_APP_BASE_URL);
     let obj = JSON.parse(localStorage.getItem('user'));
     if(obj === null){
       return;

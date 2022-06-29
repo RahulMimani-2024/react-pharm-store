@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { Form, Alert } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import styled from "styled-components";
@@ -9,8 +9,6 @@ const Signup = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [error, setError] = useState();
-  // const { signUp } = useUserAuth();
-  // const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");

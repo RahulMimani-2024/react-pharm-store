@@ -1,5 +1,5 @@
-import React, { useState ,useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link} from "react-router-dom";
 import { Form, Alert } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import styled from "styled-components";
@@ -9,14 +9,6 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  // const {token} = ProductProvider;
-  const user = localStorage.getItem("user");
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (user) {
-  //     navigate("/product");
-  //   }
-  // }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
