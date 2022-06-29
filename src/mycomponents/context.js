@@ -1,20 +1,13 @@
 // context API is used for the purpose of storing and serving the data
-import app from "../firebase.js";
+import axios from "axios";
 import React, { Component } from "react";
-import { storeProducts, detailProduct } from "../data";
-import { getFirestore, collection, getDocs } from "firebase/firestore/lite";
-
-const db = getFirestore(app);
-
+import { Link} from "react-router-dom";
+import { detailProduct } from "../data.js";
 const ProductContext = React.createContext();
-//It comes with two components
-// provider
-//consumer
-
 class ProductProvider extends Component {
   state = {
     products: [],
-    detailProduct: detailProduct,
+    detailProduct: {},
     cart: [],
     modalOpen: false,
     modalProduct: detailProduct,
@@ -22,7 +15,6 @@ class ProductProvider extends Component {
     cartTax: 0,
     cartTotal: 0,
   };
-
   getItem = (id) => {
     const product = this.state.products.find((item) => item.id === id);
     return product;
@@ -35,7 +27,6 @@ class ProductProvider extends Component {
     });
   };
   addToCart = (id) => {
-    // console.log(`hello from add to cart.Id is ${id}`);
     let tempProduct = [...this.state.products];
     const index = tempProduct.indexOf(this.getItem(id));
     const product = tempProduct[index];
@@ -43,6 +34,24 @@ class ProductProvider extends Component {
     product.count = 1;
     const price = product.price;
     product.total = price;
+    this.modalProduct = product;
+    axios
+      .post(
+        process.env.REACT_APP_BASE_URL+`users/me/cart/add`,
+        {
+          productId: product.id,
+          count: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.state.token}`,
+          },
+        }
+      )
+      .then((res) => {
+      })
+      .catch((e) => {
+      });
     this.setState(
       () => {
         return { products: tempProduct, cart: [...this.state.cart, product] };
@@ -54,43 +63,83 @@ class ProductProvider extends Component {
   };
   // since the objcets in javascripts are passed by refernece so change in product will reflect in data.js
 
-  componentDidMount() {
-    this.getMedicines().then((products) => {
-      this.setProducts(products);
-    });
+  UNSAFE_componentWillMount() {
+    console.log(process.env.REACT_APP_BASE_URL);
+    let obj = JSON.parse(localStorage.getItem('user'));
+    if(obj === null){
+      return;
+    }
+    this.state.token = obj.token;
+    axios
+    .get(process.env.REACT_APP_BASE_URL + `products`)
+    .then((res) => {
+      const allProducts = res.data;
+      this.setProducts(allProducts);
+      axios
+      .get(process.env.REACT_APP_BASE_URL + `users/me`, {
+        headers: {
+          Authorization: `Bearer ${this.state.token}`,
+        },
+      })
+      .then((res) => {
+          })
+          .catch((e) => {
+          });
+        axios
+          .get(process.env.REACT_APP_BASE_URL+`users/me/cart`, {
+            headers: {
+              Authorization: `Bearer ${this.state.token}`,
+            },
+          })
+          .then((res) => {
+            this.setCart(res.data);
+          });
+      })
+      .catch((err) => console.log(err));
   }
-
-  getMedicines = async () => {
-    const medicinesCol = collection(db, "medicines");
-    const productsSnapshot = await getDocs(medicinesCol);
-    const products = productsSnapshot.docs.map((doc) => doc.data());
-    return products||[];
+  setCart = (cardIds) => {
+    let temp = [];
+    let cartsubtotal = 0; 
+    cardIds.forEach((id) => {
+      this.state.products.forEach((product) => {
+        if (product.id === id.productId) {
+          product.count = id.count;
+          product.inCart = true;
+          product.total = product.price * product.count;
+          cartsubtotal += product.total;
+          temp = [...temp, product];
+        }
+      });
+    });
+    this.setState(() => {
+      this.state.cartsubTotal = cartsubtotal;
+      this.state.tax = cartsubtotal * 0.1;
+      this.state.cartTotal = cartsubtotal + (cartsubtotal* 0.1);
+      return { cart: temp  };
+    });
   };
-
+  
   setProducts = (products) => {
     let temp = [];
     products.forEach((item) => {
-      const singleitem = { ...item };
+      const singleitem = { ...item, inCart: false ,count : 0 ,total : 0};
       temp = [...temp, singleitem];
     });
     this.setState(() => {
       return { products: temp };
     });
   };
-
   openModal = (id) => {
     const product = this.getItem(id);
     this.setState(() => {
       return { modalProduct: product, modalOpen: true };
     });
   };
-
   closeModal = () => {
     this.setState(() => {
       return { modalOpen: false };
     });
   };
-
   increament = (id) => {
     let tempcart = [...this.state.cart];
     const selectedproduct = tempcart.find((item) => item.id === id);
@@ -98,6 +147,23 @@ class ProductProvider extends Component {
     const product = tempcart[index];
     product.count = product.count + 1;
     product.total = product.price * product.count;
+    axios
+      .post(
+        process.env.REACT_APP_BASE_URL+`users/me/cart/update`,
+        {
+          productId: product.id,
+          count: product.count,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.state.token}`,
+          },
+        }
+      )
+      .then((res) => {
+      })
+      .catch((e) => {
+      });
     this.setState(
       () => {
         return { cart: [...tempcart] };
@@ -107,7 +173,6 @@ class ProductProvider extends Component {
       }
     );
   };
-
   decreament = (id) => {
     let tempcart = [...this.state.cart];
     const selectedproduct = tempcart.find((item) => item.id === id);
@@ -115,9 +180,42 @@ class ProductProvider extends Component {
     const product = tempcart[index];
     product.count = product.count - 1;
     if (product.count === 0) {
+      axios
+        .post(
+          process.env.REACT_APP_BASE_URL+`users/me/cart/delete`,
+          {
+            productId: product.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.state.token}`,
+            },
+          }
+        )
+        .then((res) => {
+        })
+        .catch((e) => {
+        });
       this.removeItem(id);
     } else {
       product.total = product.price * product.count;
+      axios
+        .post(
+          process.env.REACT_APP_BASE_URL+`users/me/cart/update`,
+          {
+            productId: product.id,
+            count: product.count,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.state.token}`,
+            },
+          }
+        )
+        .then((res) => {
+        })
+        .catch((e) => {
+        });
       this.setState(
         () => {
           return { cart: [...tempcart] };
@@ -128,7 +226,6 @@ class ProductProvider extends Component {
       );
     }
   };
-
   removeItem = (id) => {
     let tempproduct = [...this.state.products];
     let tempcart = [...this.state.cart];
@@ -137,6 +234,22 @@ class ProductProvider extends Component {
     let removedproduct = tempproduct[index];
     removedproduct.inCart = false;
     removedproduct.count = 0;
+    axios
+        .post(
+          process.env.REACT_APP_BASE_URL+`users/me/cart/delete`,
+          {
+            productId: removedproduct.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.state.token}`,
+            },
+          }
+        )
+        .then((res) => {
+        })
+        .catch((e) => {
+        });
     this.setState(
       () => {
         return {
@@ -149,29 +262,43 @@ class ProductProvider extends Component {
       }
     );
   };
-
   clearCart = () => {
+    this.state.cart.forEach( (product) =>{
+      axios
+        .post(
+          process.env.REACT_APP_BASE_URL+`users/me/cart/delete`,
+          {
+            productId: product.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.state.token}`,
+            },
+          }
+        )
+        .then((res) => {
+        })
+        .catch((e) => {
+        });
+    })
     this.setState(
       () => {
         return { cart: [] };
       },
-      () => {
-        this.getMedicines()
-        .then(products => {
-          this.setProducts(products);
+      () => {       
+          this.setProducts(this.state.products);
           this.addTotal();
-        })
+
       }
     );
+    return <Link to="/product" />;
   };
-
   addTotal = () => {
     let subtotal = 0;
-    this.state.cart.map((item) => (subtotal += item.total));
+    this.state.cart.map((item) => (subtotal += item.count*item.price));
     const temptax = subtotal * 0.1;
     const tax = parseFloat(temptax.toFixed(2));
     const total = subtotal + tax;
-    console.log(total);
     this.setState(() => {
       return {
         cartTax: tax,
@@ -182,6 +309,7 @@ class ProductProvider extends Component {
   };
 
   render() {
+    
     return (
       <ProductContext.Provider
         value={{

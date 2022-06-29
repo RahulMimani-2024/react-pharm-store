@@ -1,14 +1,14 @@
 import React from "react";
 
 const Cartitem = ({ item, value }) => {
-  const { id, title, img, price, total, count } = item;
+  const { id,_id, title, price, total, count } = item;
   const { increament, decreament, removeItem } = value;
   return (
     <>
       <div className="row my-1 text-capitalize text-center">
         <div className="col-10 mx-auto col-lg-2">
           <img
-            src={img}
+            src={process.env.REACT_APP_BASE_URL+"products/" + _id+ "/avatar"}
             className="img-fluid"
             style={{ width: "5rem", height: "5rem" }}
             alt="product"

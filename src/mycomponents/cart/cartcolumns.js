@@ -47,6 +47,6 @@ p{
 `;
 
 const Hr = styled.hr`
-border : 1px solid red;`
+border : 1px solid black;`
 
 export default Cartcolumns;

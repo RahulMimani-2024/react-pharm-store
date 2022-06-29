@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 
 export const ButtonContainer = styled.button`
+position : relative !important;
 text-transform : capitalize;
 font-size : 1.4rem;
 background : transparent;
@@ -12,11 +13,15 @@ transition: all 0.5s ease-in-out;
 &:hover{
     background : grey;
 }
+padding : 0.2rem !important;
 `
 export const Span = styled.span`
 margin : 0.3rem;
 `
 export const Nav=styled.nav`
+position : sticky !important;
+top : 0;
+z-index : +1;
 background-color : black;
 & img  {
     width : 30px;
@@ -30,6 +35,8 @@ background-color : black;
 & Link:hover{
     color: yellow !important;
 }
+overflow : auto !important;
 `
+
 
 

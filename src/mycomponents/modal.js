@@ -10,7 +10,7 @@ class Modal extends Component {
       <ProductConsumer>
         {(value) => {
           const { modalOpen, closeModal } = value;
-          const { img, title, price } = value.modalProduct;
+          const { _id, title, price } = value.modalProduct;
           if (!modalOpen) {
             return null;
           } else {
@@ -21,10 +21,10 @@ class Modal extends Component {
                     <div id="modal" className="col-8 mx-auto col-md col-lg-4 text-center text-capitalize p-5">
                       <h5>Item Added to the card</h5>
                       {/* {console.log("asdsad")} */}
-                      <img src={img} className="img-fluid" alt="product" />
+                      <img src={process.env.REACT_APP_BASE_URL+"products/" + _id+ "/avatar"} className="img-fluid" alt="product" />
                       <h5>{title}</h5>
                       <h5 className="text-muted">price : ₹{price}</h5>
-                      <Link to='/'>
+                      <Link to='/product'>
                           <StyledButtonContainer onClick={()=>closeModal()}>
                               Home
                           </StyledButtonContainer>
@@ -66,6 +66,7 @@ justify-content:center;
 }
 `;
 const StyledButtonContainer = styled(ButtonContainer)`
+padding : 0.3rem !important;
 
 color : black;
 border : 2px solid black;

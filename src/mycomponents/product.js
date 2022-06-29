@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { ProductConsumer } from "./context.js";
 import PropTypes from "prop-types";
-import { propTypes } from "react-bootstrap/esm/Image";
 class Product extends Component {
   render() {
-    const { id, title, img, price, inCart } = this.props.product;
+    // const {user} = useUserAuth();
+    const { _id,id, title, img, price, inCart } = this.props.product;
     return (
       <Productwrapper className="col-9 mx-auto col-md-6 col-lg-3 my-3">
         <div className="card">
@@ -19,7 +19,7 @@ class Product extends Component {
                 }
               >
                 <Link to="/details">
-                  <img src={img} alt="product" className="card-img-top"></img>
+                  <img src={process.env.REACT_APP_BASE_URL+"products/" + _id+ "/avatar"} alt="product" className="card-img-top"></img>
                 </Link>
                 <button
                   className="cart-btn"
@@ -57,14 +57,15 @@ class Product extends Component {
 }
 
 const Productwrapper = styled.div`
-  width: 250px;
+  width: auto;
   height: auto;
   display: flex;
   justify-content: space-around;
   box-sizing: border-box;
   flex-wrap: wrap;
   .card {
-    border-color: transparent;
+    border: transparent;
+    border-top : 0.2rem solid black;
     transition: all 1s linear;
   }
   .card-footer {
@@ -101,6 +102,7 @@ const Productwrapper = styled.div`
     transform: scale(1.2);
   }
   .cart-btn {
+    padding : 0.3 rem; 
     position: absolute;
     bottom: 0px;
     right: 2px;

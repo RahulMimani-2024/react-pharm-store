@@ -1,21 +1,16 @@
-
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-// Follow this pattern to import other Firebase services
-// import { } from 'firebase/<service>';
-
-// TODO: Replace the following with your app's Firebase project configuration
-
+// import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getAuth } from "firebase/auth";
 const firebaseConfig = {
-  apiKey: "AIzaSyDkxhdOHDM184HIGi8Ge649a1NCUMP-p5U",
-  authDomain: "pharmstore-8c39a.firebaseapp.com",
-  projectId: "pharmstore-8c39a",
-  storageBucket: "pharmstore-8c39a.appspot.com",
-  messagingSenderId: "470963572282",
-  appId: "1:470963572282:web:1559a604f7a18fdc27ef03",
-  measurementId: "G-JS4YB1J6NJ"
+  apiKey: "AIzaSyCvfZ0lCN53hRZEkPpLzteaV9VtPT69yTk",
+  authDomain: "pharm-api.firebaseapp.com",
+  projectId: "pharm-api",
+  storageBucket: "pharm-api.appspot.com",
+  messagingSenderId: "965267615799",
+  appId: "1:965267615799:web:c2d7e4190f8599fcce8fb2",
+  measurementId: "G-9S56CB65RN"
 };
 
 const app = initializeApp(firebaseConfig);
-
+export const auth = getAuth(app);
 export default app;
